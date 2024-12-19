@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\Authorization;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -34,6 +35,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'authorization' => Authorization::class
     ];
 
     /**
@@ -53,6 +55,7 @@ class Filters extends BaseFilters
         'before' => [
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
+            'authorization'
         ],
         'after' => [
             'pagecache',   // Web Page Caching
