@@ -8,12 +8,57 @@
 </head>
 
 <body>
-    <form action="">
-        <input type="text" name="name" id="name" placeholder="Name">
-        <input type="email" name="email" id="email" placeholder="Email">
-        <input type="password" name="password" id="password" placeholder="Password">
+    <form id="form">
+        <input type="text" name="name" id="name" placeholder="Name" required>
+        <input type="email" name="email" id="email" placeholder="Email" required>
+        <input type="password" name="password" id="password" placeholder="Password" required>
         <button type="submit">Sign Up</button>
     </form>
+
+    <script>
+        //CREATE AN USER OBJECT TO SEND TO SERVER
+        const createUser = () => {
+            const name = document.querySelector("#name").value;
+            const email = document.querySelector("#email").value;
+            const password = document.querySelector("#password").value;
+
+            return {
+                name,
+                email,
+                password
+            };
+        }
+
+        //DO AN AJAX CALL TO SERVER (TRY TO CREATE USER)
+        const signUp = async () => {
+            try {
+                const user = createUser();
+                const response = await fetch("http://localhost:8080/signup", {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(user)
+                });
+                const body = await response.json();
+
+                if (body.errors.length > 0) {
+                    alert(body.errors[0]);
+                } else {
+                    alert(body.content[0]);
+                }
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            signUp();
+        });
+
+    </script>
 </body>
 
 </html>

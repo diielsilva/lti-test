@@ -8,3 +8,4 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 $routes->get('/signup', 'SignUp::form');
+$routes->post('/signup', 'SignUp::store');
