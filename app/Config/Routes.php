@@ -11,7 +11,11 @@ $routes->post('/signin', 'SignIn::authenticate');
 $routes->get('/signup', 'SignUp::form');
 $routes->post('/signup', 'SignUp::store');
 
-$routes->get('/home', 'SignIn::home');
+$routes->group('/users', static function ($routes) {
+    $routes->get('', 'SignIn::home');
+    $routes->put('', 'Users::update');
+    $routes->delete('', 'User::delete');
+});
 
 $routes->put('/users', 'User::update');
 $routes->delete('/users', 'User::delete');

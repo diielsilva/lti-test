@@ -47,7 +47,7 @@
                     alert(body.errors[0]);
                 } else {
                     //IF SIGNED IN, REDIRECT TO /HOME
-                    window.location.href = "<?= site_url('/home') ?>";
+                    window.location.href = "<?= site_url('/users') ?>";
                 }
 
             } catch (exception) {
