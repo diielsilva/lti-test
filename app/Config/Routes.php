@@ -16,4 +16,7 @@ $routes->get('/home', 'SignIn::home');
 $routes->put('/users', 'User::update');
 $routes->delete('/users', 'User::delete');
 
+$routes->get('/categories', 'Category::index');
+$routes->post('/categories', 'Category::create');
+
 $routes->post('/logout', 'User::logout');

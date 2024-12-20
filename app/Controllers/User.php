@@ -55,7 +55,7 @@ class User extends BaseController
             "name" => $name,
             "email" => $email,
             "password" => password_hash($password, PASSWORD_BCRYPT),
-            "updated_at" => date("")
+            "updated_at" => date("Y-m-d H:i:s")
         ]);
 
         //UPDATE SESSION AFTER A SUCCESSFUL USER UPDATE
