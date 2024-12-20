@@ -33,7 +33,7 @@
         const signUp = async () => {
             try {
                 const user = createUser();
-                const response = await fetch("http://localhost:8080/signup", {
+                const response = await fetch("<?= site_url('/signup') ?>", {
                     headers: {
                         "Content-Type": "application/json"
                     },
@@ -57,7 +57,6 @@
             event.preventDefault();
             signUp();
         });
-
     </script>
 </body>
 
