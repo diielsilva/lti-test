@@ -55,4 +55,14 @@ abstract class BaseController extends Controller
 
         // E.g.: $this->session = \Config\Services::session();
     }
+
+    protected function getRequestBody()
+    {
+        return json_decode($this->request->getBody(), true);
+    }
+
+    protected function json(int $status, mixed $body)
+    {
+        return $this->response->setJSON($body)->setStatusCode($status);
+    }
 }
