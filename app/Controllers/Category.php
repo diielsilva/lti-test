@@ -72,6 +72,42 @@ class Category extends BaseController
         return ResponseHelper::send(200, $this->response, $dto);
     }
 
+    public function update()
+    {
+        $requestBody = $this->getRequestBody();
+        $responseBody = new CustomResponse([], []);
+        $onlineUser = session()->get("online_user");
+
+        $categoryId = $requestBody["id"];
+        $categoryName = $requestBody["name"];
+
+        //Verify if there is a missing required field
+        if (!isset($categoryId) || !isset($categoryName) || strlen($categoryName) < 1) {
+            $responseBody->errors[] = "Missing required fields";
+
+            return $this->json(400, $responseBody);
+        }
+
+        $model = new CategoryModel();
+
+        $hasAnotherCategoryWithNewName = $model->where(["name" => $categoryName, "user_id" => $onlineUser["id"]])->first();
+
+        //Verify if online user has other category with the same name
+        if ($hasAnotherCategoryWithNewName && $hasAnotherCategoryWithNewName["id"] !== $categoryId) {
+            $responseBody->errors[] = "Category name in use";
+
+            return $this->json(409, $responseBody);
+        }
+
+        $model->save([
+            "id" => $categoryId,
+            "name" => $categoryName,
+            "updated_at" => date("Y-m-d H:i:s")
+        ]);
+
+        return $this->json(200, null);
+    }
+
     public function delete()
     {
 

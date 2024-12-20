@@ -42,7 +42,27 @@
         const form = document.querySelector("#create-category-form");
         const categoriesSection = document.querySelector("#categories-section");
 
-        const removeCategory = async (id) => {
+        async function updateCategory(id) {
+            try {
+                const input = document.querySelector(`#category-name-${id}`).value;
+                const response = await fetch("<?= site_url('/categories') ?>", {
+                    headers: {"Content-Type": "application/json; charset=utf-8"},
+                    method: "PUT",
+                    body: JSON.stringify({id, 'name': input})
+                });
+
+                if(response.status !== 200) {
+                    alert("Error");
+                } else {
+                    findCategoriesByOnlineUser();
+                }
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
+        async function removeCategory(id) {
             try {
 
                 const response = await fetch("<?= site_url('/categories') ?>", {
@@ -80,15 +100,27 @@
                 categories.forEach(category => {
                     const listItem = document.createElement("li");
                     const item = document.createElement("p");
+                    const input = document.createElement("input");
+
+                    input.type = "text";
+                    input.id = `category-name-${category.id}`;
+                    input.value = category.name;
+
                     const remove = document.createElement("button");
+                    const update = document.createElement("button");
+
+                    update.innerText = "Update Category";
+                    update.onclick = () => {
+                        updateCategory(category.id);
+                    }
 
                     remove.innerText = "Remove Category";
                     remove.onclick = () => {
                         removeCategory(category.id)
                     };
 
-                    item.innerText = `ID = ${category.id}, Name = ${category.name} `;
-
+                    item.appendChild(input);
+                    item.append(update);
                     item.appendChild(remove);
 
                     listItem.appendChild(item);
