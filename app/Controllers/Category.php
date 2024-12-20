@@ -71,4 +71,25 @@ class Category extends BaseController
 
         return ResponseHelper::send(200, $this->response, $dto);
     }
+
+    public function delete()
+    {
+
+        $body = json_decode($this->request->getBody(), true);
+        $dto = new CustomResponse([], []);
+
+        $categoryId = $body["id"];
+
+        if (!isset($categoryId)) {
+            $dto->errors[] = "Missing required fields";
+
+            return ResponseHelper::send(404, $this->response, $dto);
+        }
+
+        $category = new CategoryModel();
+
+        $category->delete(["id" => $categoryId]);
+
+        return ResponseHelper::send(204, $this->response, $dto);
+    }
 }

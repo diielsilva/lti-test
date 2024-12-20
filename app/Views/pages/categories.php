@@ -42,9 +42,32 @@
         const form = document.querySelector("#create-category-form");
         const categoriesSection = document.querySelector("#categories-section");
 
+        const removeCategory = async (id) => {
+            try {
+
+                const response = await fetch("<?= site_url('/categories') ?>", {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    method: "DELETE",
+                    body: JSON.stringify({
+                        id
+                    })
+                });
+
+                if (response.status === 204) {
+                    findCategoriesByOnlineUser();
+                } else {
+                    alert("Category not found!");
+                }
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
         const renderCategories = (categories) => {
             categoriesSection.innerHTML = '';
-            
+
             if (categories.length === 0) {
                 const message = document.createElement("p");
 
@@ -57,8 +80,16 @@
                 categories.forEach(category => {
                     const listItem = document.createElement("li");
                     const item = document.createElement("p");
+                    const remove = document.createElement("button");
+
+                    remove.innerText = "Remove Category";
+                    remove.onclick = () => {
+                        removeCategory(category.id)
+                    };
 
                     item.innerText = `ID = ${category.id}, Name = ${category.name} `;
+
+                    item.appendChild(remove);
 
                     listItem.appendChild(item);
 
