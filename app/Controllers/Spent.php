@@ -5,8 +5,6 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Dtos\CustomResponse;
 use App\Models\SpentModel;
-use CodeIgniter\HTTP\ResponseInterface;
-use DateTime;
 
 class Spent extends BaseController
 {
@@ -18,6 +16,7 @@ class Spent extends BaseController
     public function create()
     {
         $responseBody = new CustomResponse([], []);
+        $onlineUser = session()->get('online_user')["id"];
         $spentToCreate = $this->getRequestBody();
 
         $categoryId = $spentToCreate["category_id"];
@@ -51,6 +50,7 @@ class Spent extends BaseController
         $model = new SpentModel();
 
         $model->save([
+            "user_id" => $onlineUser,
             "category_id" => $categoryId,
             "value" => $value,
             "description" => $description,
@@ -60,5 +60,21 @@ class Spent extends BaseController
         $responseBody->content[] = "Spent created";
 
         return $this->json(201, $responseBody);
+    }
+
+    public function findByUser()
+    {
+        $onlineUser = session()->get('online_user')["id"];
+        $responseBody = new CustomResponse([], []);
+
+        $model = new SpentModel();
+
+        $spents = $model->where("user_id", $onlineUser)->findAll();
+
+        foreach ($spents as $spent) {
+            $responseBody->content[] = $spent;
+        }
+
+        return $this->json(200, $responseBody);
     }
 }

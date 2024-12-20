@@ -39,14 +39,45 @@
         <button type="submit">Create Spent</button>
     </form>
 
+    <section id="spents-section"></section>
 
     <script>
+        const availableCategories = [];
         const createForm = document.querySelector("#create-spent-form");
+        const spentsSection = document.querySelector("#spents-section");
+
+        function renderSpents(spents) {
+            spentsSection.innerHTML = "";
+
+            if (spents.length > 0) {
+                const spentList = document.createElement("ul");
+
+                spents.forEach(spent => {
+                    const listItem = document.createElement("li");
+                    const spentCard = document.createElement("div");
+                    const category = availableCategories.filter((category) => category.id === spent.category_id);
+
+                    spentCard.innerText = `ID = ${spent.id}, Category = ${category[0].name}, Value = ${spent.value}, Description = ${spent.description}, Date = ${spent.created_at}`;
+
+                    listItem.appendChild(spentCard);
+                    spentList.appendChild(listItem);
+
+                });
+
+                spentsSection.appendChild(spentList);
+
+            } else {
+                const message = document.createElement("p");
+                message.innerText = "You don't have saved spents";
+                spentsSection.appendChild(message);
+            }
+        }
 
         function fullfillCategoriesSelectWithinSpentCreateForm(categories) {
             const select = document.querySelector("#spent-category");
 
             categories.forEach(category => {
+                availableCategories.push(category);
                 const option = document.createElement("option");
                 option.value = category.id;
                 option.innerText = category.name;
@@ -99,7 +130,26 @@
 
                 const body = await response.json();
 
-                console.log(body);
+                if (body.errors.length > 0) {
+
+                } else {
+                    findSpentsBasedOnOnlineUser();
+                }
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
+        async function findSpentsBasedOnOnlineUser() {
+            try {
+                const response = await fetch("<?= site_url('/spents/by-user') ?>");
+                const body = await response.json();
+
+                if (response.status === 200) {
+                    renderSpents(body.content);
+                }
+
             } catch (exception) {
                 console.log(exception);
             }
@@ -112,6 +162,7 @@
 
         window.addEventListener("load", () => {
             findCategoriesBasedOnOnlineUser();
+            findSpentsBasedOnOnlineUser();
         });
     </script>
 

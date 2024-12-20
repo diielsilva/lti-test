@@ -28,5 +28,6 @@ $routes->put('/categories', 'Category::update');
 
 $routes->get('/spents', 'Spent::index');
 $routes->post('/spents', 'Spent::create');
+$routes->get('/spents/by-user', 'Spent::findByUser');
 
 $routes->post('/logout', 'User::logout');
