@@ -26,4 +26,7 @@ $routes->get('/categories/all', 'Category::findAllByUser');
 $routes->delete('/categories', 'Category::delete');
 $routes->put('/categories', 'Category::update');
 
+$routes->get('/spents', 'Spent::index');
+$routes->post('/spents', 'Spent::create');
+
 $routes->post('/logout', 'User::logout');
