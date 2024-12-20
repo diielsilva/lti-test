@@ -40,6 +40,46 @@
 
     <script>
         const form = document.querySelector("#create-category-form");
+        const categoriesSection = document.querySelector("#categories-section");
+
+        const renderCategories = (categories) => {
+            categoriesSection.innerHTML = '';
+            
+            if (categories.length === 0) {
+                const message = document.createElement("p");
+
+                message.innerText = "You don't have saved categories";
+
+                categoriesSection.appendChild(message);
+            } else {
+                const categoriesList = document.createElement("ul");
+
+                categories.forEach(category => {
+                    const listItem = document.createElement("li");
+                    const item = document.createElement("p");
+
+                    item.innerText = `ID = ${category.id}, Name = ${category.name} `;
+
+                    listItem.appendChild(item);
+
+                    categoriesList.appendChild(listItem);
+                });
+
+                categoriesSection.appendChild(categoriesList);
+            }
+        }
+
+        const findCategoriesByOnlineUser = async () => {
+            try {
+                const response = await fetch("<?= site_url('/categories/all') ?>")
+                const body = await response.json();
+
+                renderCategories(body.content);
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
 
         const getCreateCategoryRequestBody = () => {
             const name = document.querySelector("#name").value;
@@ -63,6 +103,8 @@
 
                 if (body.errors.length > 0) {
                     alert(body.errors[0]);
+                } else {
+                    findCategoriesByOnlineUser();
                 }
 
             } catch (exception) {
@@ -73,6 +115,10 @@
         form.addEventListener("submit", (event) => {
             event.preventDefault();
             createCategory();
+        });
+
+        window.addEventListener("load", () => {
+            findCategoriesByOnlineUser();
         });
     </script>
 

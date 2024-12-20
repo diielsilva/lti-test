@@ -51,4 +51,24 @@ class Category extends BaseController
 
         return ResponseHelper::send(201, $this->response, $dto);
     }
+
+    public function findAllByUser()
+    {
+        $userId = session()->get("online_user")["id"];
+        $dto = new CustomResponse([], []);
+
+        $category = new CategoryModel();
+
+        //GET ALL CATEGORIES BELONGNING TO ONLINE USER
+        $userCategories = $category->where("user_id", $userId)->findAll();
+
+        //INSERTING CATEGORIES IN RESPONSE BODY
+        if ($userCategories) {
+            foreach ($userCategories as $category) {
+                $dto->content[] = $category;
+            }
+        }
+
+        return ResponseHelper::send(200, $this->response, $dto);
+    }
 }
