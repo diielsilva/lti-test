@@ -12,3 +12,5 @@ $routes->get('/signup', 'SignUp::form');
 $routes->post('/signup', 'SignUp::store');
 
 $routes->get('/home', 'SignIn::home');
+
+$routes->put('/users', 'User::update');
