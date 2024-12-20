@@ -14,3 +14,5 @@ $routes->post('/signup', 'SignUp::store');
 $routes->get('/home', 'SignIn::home');
 
 $routes->put('/users', 'User::update');
+
+$routes->post('/logout', 'User::logout');

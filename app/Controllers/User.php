@@ -67,4 +67,11 @@ class User extends BaseController
 
         return ResponseHelper::send(200, $this->response, $dto);
     }
+
+    public function logout()
+    {
+        session()->destroy();
+        
+        return redirect()->to("/");
+    }
 }
