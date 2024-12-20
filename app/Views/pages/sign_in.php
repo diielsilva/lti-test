@@ -33,7 +33,7 @@
         const signIn = async () => {
             try {
                 const request = createRequestBody();
-                const response = await fetch("http://localhost:8080/signin", {
+                const response = await fetch("<?= site_url('/signin') ?>", {
                     headers: {
                         "Content-Type": "application/json; charset=utf-8"
                     },
@@ -46,7 +46,7 @@
                     alert(body.errors[0]);
                 } else {
                     //IF SIGNED IN, REDIRECT TO /HOME
-                    window.location.href = "http://localhost:8080/home";
+                    window.location.href = "<?= site_url('/home') ?>";
                 }
 
             } catch (exception) {
