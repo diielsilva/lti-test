@@ -14,5 +14,6 @@ $routes->post('/signup', 'SignUp::store');
 $routes->get('/home', 'SignIn::home');
 
 $routes->put('/users', 'User::update');
+$routes->delete('/users', 'User::delete');
 
 $routes->post('/logout', 'User::logout');

@@ -68,10 +68,35 @@ class User extends BaseController
         return ResponseHelper::send(200, $this->response, $dto);
     }
 
+    public function delete()
+    {
+        $dto = new CustomResponse([], []);
+        $userId = session()->get("online_user")["id"];
+
+
+        $user = new UserModel();
+
+        //VERIFY IF ID EXISTS
+        $userWithSpecifiedId = $user->find($userId);
+
+        //IF USER ID WAS NOT FOUND, SEND ERROR RESPONSE
+        if (!$userWithSpecifiedId) {
+            $dto->errors[] = "User not found";
+
+            return ResponseHelper::send(404, $this->response, $dto);
+        }
+
+        $user->delete($userId);
+
+        session()->destroy();
+
+        return ResponseHelper::send(200, $this->response, $dto);
+    }
+
     public function logout()
     {
         session()->destroy();
-        
+
         return redirect()->to("/");
     }
 }

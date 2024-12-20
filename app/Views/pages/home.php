@@ -36,8 +36,11 @@
         <button type="submit">Edit User</button>
     </form>
 
+    <button id="removeAccount">Remove Account</button>
+
     <script>
         const updateForm = document.querySelector("#form");
+        const removeAccountButton = document.querySelector("#removeAccount");
 
         const createUpdateUserRequestBody = () => {
             const name = document.querySelector("#name").value;
@@ -75,10 +78,35 @@
             }
         }
 
+        const removeAccount = async () => {
+            try {
+                const deleteUserResponse = await fetch("<?= site_url('/users') ?>", {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    method: 'DELETE'
+                });
+                const deleteUserResponseBody = await deleteUserResponse.json();
+
+                
+                //DISPLAY ERRORS, IF THEY EXIST
+                if (deleteUserResponseBody.errors.length > 0) {
+                    alert(deleteUserResponseBody.errors[0]);
+                } else {
+                    //IF USER WAS REMOVED, THEN RETURN TO LOGIN PAGE
+                    window.location.href = "<?= site_url('/') ?>";
+                }
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
         updateForm.addEventListener("submit", (event) => {
             event.preventDefault();
             updateUser();
         });
+
+        removeAccountButton.addEventListener("click", removeAccount);
     </script>
 </body>
 
