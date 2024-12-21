@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Dtos\CustomResponse;
+use App\Dtos\ResponseBody;
 use App\Models\UserModel;
 
 class Login extends BaseController
@@ -15,49 +15,44 @@ class Login extends BaseController
 
     public function authenticate()
     {
-        $requestBody = $this->getRequestBody();
-        $responseBody = new CustomResponse([], []);
-
-        $email = $requestBody["email"];
-        $password = $requestBody["password"];
+        $request = $this->getRequestBody();
+        $response = new ResponseBody([]);
 
         //Verifying if a required field is missing 
-        if (!isset($email) || !isset($password)) {
-            $responseBody->errors[] = "Missing required fields";
-
-            return $this->json(400, $responseBody);
+        if (empty($request["email"]) || empty($request["password"])) {
+            $response->message = "Missing required fields";
+            return $this->json(400, $response);
         }
+
+        $email = $request["email"];
+        $password = $request["password"];
 
         //Verifying if email is invalid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $responseBody->errors[] = "Invalid email";
-
-            return $this->json(400, $responseBody);
+            $response->message = "Invalid email";
+            return $this->json(400, $response);
         }
 
         //Verifying if password length is smaller than the minium length
         if (strlen($password) < 6) {
-            $responseBody->errors[] = "Password must have at least 6 characters";
-
-            return $this->json(400, $responseBody);
+            $response->message = "Password must have at least 6 characters";
+            return $this->json(400, $response);
         }
 
         //Trying to find the user by his email
         $model = new UserModel();
         $user = $model->where("email", $email)->first();
 
-        //Verifying if the received email is invalid
+        //Verifying was not found by his email
         if (!$user) {
-            $responseBody->errors[] = "Email or password invalid";
-
-            return $this->json(400, $responseBody);
+            $response->message = "Email or password invalid";
+            return $this->json(400, $response);
         }
 
         //Verifying if the received password is invalid
         if (!password_verify($password, $user["password"])) {
-            $responseBody->errors[] = "Email or password invalid";
-
-            return $this->json(400, $responseBody);
+            $response->message = "Email or password invalid";
+            return $this->json(400, $response);
         }
 
         //Destroying the password property, because we don't want to put it into the session
@@ -66,6 +61,6 @@ class Login extends BaseController
         //Creating user session
         session()->set("online_user", $user);
 
-        return $this->json(200, $responseBody);
+        return $this->json(200, $response);
     }
 }

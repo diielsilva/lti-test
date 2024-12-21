@@ -43,18 +43,11 @@
             body: requestBody
         });
 
-        //Verifying if the server was unavailable, if yes, display a default message
-        if (authenticateResponse.status === 503) {
-            displayMessage('The server is unavailable')
-
-            return;
-        }
-
         const responseBody = await authenticateResponse.json();
-        const hasErrors = responseBody.errors.length > 0;
+        const hasErrors = responseBody.message !== '';
 
         if (hasErrors) {
-            const message = responseBody.errors[0];
+            const message = responseBody.message;
 
             displayMessage(message);
 

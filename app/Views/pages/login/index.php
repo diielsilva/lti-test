@@ -14,7 +14,7 @@
 
     <form id="login-form">
         <input type="email" name="email" id="email" placeholder="Email" required>
-        <input type="password" name="password" id="password" placeholder="Password" required>
+        <input type="password" name="password" id="password" placeholder="Password" minlength="6" required>
         <button type="submit">Login</button>
         <a href="<?= site_url('/signup') ?>">Don't have an account? sign up</a>
     </form>
