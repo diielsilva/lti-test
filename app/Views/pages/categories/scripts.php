@@ -17,8 +17,8 @@
         }, 1500);
     }
 
-     //Trying to get all categories that belongs to the current authenticated user and load then
-     const findByUser = async () => {
+    //Trying to get all categories that belongs to the current authenticated user and load then
+    const findByUser = async () => {
         const findResponse = await fetch("<?= site_url('/categories/by-user') ?>");
 
         //If we could reach the server
@@ -56,17 +56,26 @@
 
         categories.forEach(category => {
             const listItem = document.createElement("li");
-            const card = document.createElement("p");
+            const card = document.createElement("div");
+            const cardTitle = document.createElement("h3");
             const input = document.createElement("input");
+
+            card.classList.add("card");
+
+            cardTitle.innerText = "Category";
 
             //Adding id, and fulfilling the input to display the category name, it will be used to update later
             input.type = "text";
             input.id = `update-name-${category.id}`;
             input.value = category.name;
-
+            input.placeholder = "Name";
+    
             //Creating buttons to append inside category "card"
             const updateButton = document.createElement("button");
             const deleteButton = document.createElement("button");
+
+            updateButton.classList.add("submit-button");
+            deleteButton.classList.add("submit-button");
 
             //Adding behaviors to update category button
             updateButton.innerText = "Update Category";
@@ -81,6 +90,7 @@
             };
 
             //Mounting category card
+            card.appendChild(cardTitle);
             card.appendChild(input);
             card.append(updateButton);
             card.appendChild(deleteButton);
@@ -90,7 +100,7 @@
 
             //Rendering list item
             categoriesList.appendChild(listItem);
-        }); 
+        });
 
         //Rendering categories
         categoriesContainer.appendChild(categoriesList);
@@ -120,7 +130,7 @@
 
     //Trying to update a category, base on its ID
     const update = async (id) => {
-        
+
         const requestBody = getCreateOrUpdateCategoryRequestBody(id);
         const updateResponse = await fetch("<?= site_url('/categories') ?>", {
             method: "PUT",
@@ -132,8 +142,8 @@
 
         //If the category was not updated, display an error message
         if (updateResponse.status !== 200) {
-            const requestBody = await updateResponse.json();
-            const message = response.message;
+            const responseBody = await updateResponse.json();
+            const message = responseBody.message;
 
             displayMessage(message);
 

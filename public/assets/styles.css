@@ -34,6 +34,10 @@ select {
     outline: none;
 }
 
+ul {
+    list-style: none;
+}
+
 a {
     color: blue;
     text-decoration: none;
@@ -45,7 +49,8 @@ a {
     padding: 5px;
     border-radius: 10px;
     margin: 10px;
-    cursor: pointer
+    cursor: pointer;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .container {
@@ -93,4 +98,10 @@ a {
 
 #navbar li {
     display: inline-block;
+}
+
+.card {
+    border-radius: 5px;
+    box-shadow: 0px 0px 4px rgb(39, 39, 39);
+    margin: 10px;
 }

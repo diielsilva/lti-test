@@ -5,26 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categories</title>
+    <link rel="stylesheet" href="<?= base_url('/assets/styles.css') ?>">
 </head>
 
 <body>
     <?php require_once(APPPATH . "/Views/templates/header.php") ?>
 
-    <section id="message-container">
+    <div class="container">
+        <section id="message-container">
 
-    </section>
+        </section>
 
-    <fieldset>
-        <legend>Create Category</legend>
+        <h1>Categories</h1>
+
         <form id="create-form">
             <input type="text" name="name" id="name" placeholder="Name" required>
-            <button type="submit">Create Category</button>
+            <button type="submit" class="submit-button">Create Category</button>
         </form>
-    </fieldset>
 
-    <section id="categories-container">
+        <section id="categories-container">
 
-    </section>
+        </section>
+    </div>
 
     <?php require_once(APPPATH . "/Views/pages/categories/scripts.php") ?>
 </body>
