@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
 </head>
 
 <body>
@@ -12,15 +12,15 @@
 
     </section>
 
-    <form id="login-form">
+    <form id="register-form">
+        <input type="text" name="name" id="name" placeholder="Name" required>
         <input type="email" name="email" id="email" placeholder="Email" required>
         <input type="password" name="password" id="password" placeholder="Password" minlength="6" required>
-        <button type="submit">Login</button>
-        <a href="<?= site_url('/register') ?>">Don't have an account? Register</a>
+        <button type="submit">Register</button>
+        <a href="<?= site_url('/') ?>">Already have an account? Login</a>
     </form>
 
-    <?php require_once(APPPATH . '/Views/pages/login/scripts.php') ?>
-
+    <?php require_once(APPPATH . "/Views/pages/register/scripts.php") ?>
 </body>
 
 </html>

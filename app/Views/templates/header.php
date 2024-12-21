@@ -7,7 +7,7 @@
             <li><a href="<?= base_url("/spents") ?>">Spents</a></li>
         </ul>
         <ul>
-            <li><a href="<?= base_url("/reports") ?>">Report</a></li>
+            <li><a href="<?= base_url("/reports") ?>">Reports</a></li>
         </ul>
         <ul>
             <li>

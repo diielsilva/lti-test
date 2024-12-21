@@ -31,14 +31,13 @@ class Authorization implements FilterInterface
         //Extracting the string index.php from URI
         $path = str_replace("/index.php", "", $path);
 
-
         //Verifying if an authenticated user is trying to access a free route
-        if (($path === "/" || $path === "/login" || $path === "/signup") && session()->has("online_user")) {
+        if (($path === "/" || $path === "/login" || $path === "/register") && session()->has("online_user")) {
             return redirect()->to("/users");
         }
 
         //Verify if an unauthenticated user is trying to access a secure route 
-        if (($path !== "/" && $path !== "/login" && $path !== "/signup") && !session()->has("online_user")) {
+        if (($path !== "/" && $path !== "/login" && $path !== "/register") && !session()->has("online_user")) {
             return redirect()->to("/login");
         }
     }

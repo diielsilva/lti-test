@@ -8,22 +8,24 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', 'Home::index');
 
+//Login routes
 $routes->group('/login', static function ($routes) {
     $routes->get('', 'Login::index');
     $routes->post('', 'Login::authenticate');
 });
 
-$routes->get('/signup', 'SignUp::form');
-$routes->post('/signup', 'SignUp::store');
+//Register routes (creates an user)
+$routes->group('/register', static function ($routes) {
+    $routes->get('', 'Register::index');
+    $routes->post('', 'Register::create');
+});
 
+//Users routes
 $routes->group('/users', static function ($routes) {
     $routes->get('', 'User::index');
     $routes->put('', 'User::update');
     $routes->delete('', 'User::delete');
 });
-
-$routes->put('/users', 'User::update');
-$routes->delete('/users', 'User::delete');
 
 $routes->get('/categories', 'Category::index');
 $routes->post('/categories', 'Category::create');
