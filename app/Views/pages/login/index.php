@@ -9,11 +9,13 @@
 </head>
 
 <body>
-    <section id="message-container">
 
-    </section>
 
     <div class="container">
+        <section id="message-container">
+
+        </section>
+        
         <h1>Login</h1>
         <form id="login-form">
             <input type="email" name="email" id="email" placeholder="Email" required>

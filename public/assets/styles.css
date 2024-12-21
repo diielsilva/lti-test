@@ -58,3 +58,10 @@ a {
     border-radius: 5px;
     max-width: 700px;
 }
+
+#message-container {
+    text-align: center;
+    width: 100%;
+    background-color: rgb(205, 231, 32);
+    border-radius: 5px;
+}
