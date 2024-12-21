@@ -25,20 +25,21 @@ class Authorization implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        //GET CURRENT REQUEST URL
+        //Get the current URI
         $path = $request->getUri()->getPath();
 
-        //GET CLEAN PATH
+        //Extracting the string index.php from URI
         $path = str_replace("/index.php", "", $path);
 
-        //VERIFY IF AN ONLINE USER IS TRYING TO ACCESS THE FOLLOWING ROUTES (/, signin, signup), IF YES, REDIRECT TO HOME
-        if (($path === "/" || $path === "/signin" || $path === "/signup") && session()->has("online_user")) {
-            return redirect()->to("/home");
+
+        //Verifying if an authenticated user is trying to access a free route
+        if (($path === "/" || $path === "/login" || $path === "/signup") && session()->has("online_user")) {
+            return redirect()->to("/users");
         }
 
-        //VERIFY IF IT HAS AN ONLINE USER TO ACCESS PROTECTED RESOURCES
-        if (($path !== "/" && $path !== "/signin" && $path !== "/signup") && !session()->has("online_user")) {
-            return redirect()->to("/");
+        //Verify if an unauthenticated user is trying to access a secure route 
+        if (($path !== "/" && $path !== "/login" && $path !== "/signup") && !session()->has("online_user")) {
+            return redirect()->to("/login");
         }
     }
 

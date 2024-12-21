@@ -8,6 +8,11 @@ use App\Models\UserModel;
 
 class User extends BaseController
 {
+    public function index()
+    {
+        return view('pages/home');
+    }
+
     public function update()
     {
         $form = json_decode($this->request->getBody(), true);

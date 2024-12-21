@@ -5,15 +5,20 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'SignIn::index');
-$routes->post('/signin', 'SignIn::authenticate');
+
+$routes->get('/', 'Home::index');
+
+$routes->group('/login', static function ($routes) {
+    $routes->get('', 'Login::index');
+    $routes->post('', 'Login::authenticate');
+});
 
 $routes->get('/signup', 'SignUp::form');
 $routes->post('/signup', 'SignUp::store');
 
 $routes->group('/users', static function ($routes) {
-    $routes->get('', 'SignIn::home');
-    $routes->put('', 'Users::update');
+    $routes->get('', 'User::index');
+    $routes->put('', 'User::update');
     $routes->delete('', 'User::delete');
 });
 
