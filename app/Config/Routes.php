@@ -37,4 +37,7 @@ $routes->get('/spents/by-user', 'Spent::findByUser');
 $routes->put('/spents', 'Spent::update');
 $routes->delete('/spents', 'Spent::delete');
 
+$routes->get('/reports', 'Report::index');
+$routes->post('/reports', 'Report::create');
+
 $routes->post('/logout', 'User::logout');
