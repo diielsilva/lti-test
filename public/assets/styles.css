@@ -36,6 +36,7 @@ select {
 
 a {
     color: blue;
+    text-decoration: none;
 }
 
 .submit-button {
@@ -64,4 +65,32 @@ a {
     width: 100%;
     background-color: rgb(205, 231, 32);
     border-radius: 5px;
+}
+
+#navbar {
+    display: flex;
+    width: 100dvw;
+    max-width: 700px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+#nav-link {
+    color: blue;
+    font-size: 15px;
+    background: none;
+    margin-right: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#navbar ul {
+    list-style: none;
+}
+
+#navbar li {
+    display: inline-block;
 }

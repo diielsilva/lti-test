@@ -4,27 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Users</title>
+    <link rel="stylesheet" href="<?= base_url('/assets/styles.css') ?>">
 </head>
 
 <body>
     <?php require_once(APPPATH . "/Views/templates/header.php") ?>
 
-    <section id="message-container">
+    <div class="container">
+        <section id="message-container">
 
-    </section>
+        </section>
 
-    <fieldset>
-        <legend>Update User</legend>
+        <h1>User</h1>
         <form id="update-form">
-            <input type="text" name="name" id="name" value="<?= $name ?>" required>
-            <input type="email" name="email" id="email" value="<?= $email ?>" required>
-            <input type="password" name="password" id="password" minlength="6" required>
-            <button type="submit">Edit User</button>
+            <input type="text" name="name" id="name" value="<?= $name ?>" placeholder="Name" required>
+            <input type="email" name="email" id="email" value="<?= $email ?>" placeholder="Email" required>
+            <input type="password" name="password" id="password" minlength="6" placeholder="Password" required>
+            <button type="submit" class="submit-button">Edit User</button>
         </form>
-    </fieldset>
 
-    <button id="delete-button">Delete Account</button>
+        <button id="delete-button" class="submit-button">Delete Account</button>
+    </div>
 
     <?php require_once(APPPATH . "/Views/pages/users/scripts.php") ?>
 
