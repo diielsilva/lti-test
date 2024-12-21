@@ -77,4 +77,16 @@ class Spent extends BaseController
 
         return $this->json(200, $responseBody);
     }
+
+    public function delete()
+    {
+        $requestBody = $this->getRequestBody();
+        $spentId = $requestBody["spentId"];
+
+        $model = new SpentModel();
+
+        $model->delete($spentId);
+
+        return $this->json(204, null);
+    }
 }

@@ -46,6 +46,25 @@
         const createForm = document.querySelector("#create-spent-form");
         const spentsSection = document.querySelector("#spents-section");
 
+        async function removeSpent(id) {
+            try {
+                const response = await fetch("<?= site_url('/spents') ?>", {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify({
+                        'spentId': id
+                    })
+                });
+
+                findSpentsBasedOnOnlineUser();
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
         function renderSpents(spents) {
             spentsSection.innerHTML = "";
 
@@ -56,8 +75,15 @@
                     const listItem = document.createElement("li");
                     const spentCard = document.createElement("div");
                     const category = availableCategories.filter((category) => category.id === spent.category_id);
+                    const removeSpentBtn = document.createElement("button");
+
+                    removeSpentBtn.innerText = 'Remove Spent';
+                    removeSpentBtn.onclick = () => {
+                        removeSpent(spent.id);
+                    }
 
                     spentCard.innerText = `ID = ${spent.id}, Category = ${category[0].name}, Value = ${spent.value}, Description = ${spent.description}, Date = ${spent.created_at}`;
+                    spentCard.appendChild(removeSpentBtn);
 
                     listItem.appendChild(spentCard);
                     spentList.appendChild(listItem);
