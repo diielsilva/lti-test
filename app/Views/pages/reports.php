@@ -47,19 +47,40 @@
 
                 const body = await response.json();
 
+                console.log(body);
+
                 //better display it
-                if (body.errors.length === 0) {
-                    const container = document.querySelector("#report-container");
-                    container.innerText = '';
 
-                    body.content.forEach(report => {
-                        const div = document.createElement("div");
-                        div.innerText = `${report.description} , category = ${report.name}`;
+                const container = document.querySelector("#report-container");
+                container.innerText = '';
+                let totalOfReports = 0;
 
-                        container.appendChild(div);
-                    });
-                }
+                body.content.forEach(report => {
+                    totalOfReports += Number.parseFloat(report.value);
 
+                    const card = document.createElement("div");
+                    const reportValue = document.createElement("div");
+                    const reportDate = document.createElement("div");
+                    const reportCategory = document.createElement("div");
+                    const reportDescription = document.createElement("div");
+
+
+                    reportValue.innerText = report.value;
+                    reportDate.innerText = report.created_at.split(' ')[0];
+                    reportDescription.innerText = report.description;
+
+                    card.appendChild(reportValue);
+                    card.appendChild(reportDate);
+                    card.appendChild(reportCategory);
+                    card.appendChild(reportDescription);
+
+                    container.appendChild(card);
+                });
+
+                const totalDiv = document.createElement("div");
+                totalDiv.innerText = totalOfReports;
+
+                container.appendChild(totalDiv);
 
             } catch (exception) {
                 console.log(exception);
@@ -79,7 +100,7 @@
 
         async function findCategoriesBasedOnOnlineUser() {
             try {
-                const response = await fetch("<?= site_url('/categories/all') ?>", {
+                const response = await fetch("<?= site_url('/categories/by-user') ?>", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8'
@@ -87,13 +108,8 @@
                 });
                 const body = await response.json();
 
-                const hasErrors = body.errors.length > 0;
+                fullfillCategoriesSelectWithinSpentCreateForm(body.content);
 
-                if (hasErrors) {
-                    alert(body.errors[0]);
-                } else {
-                    fullfillCategoriesSelectWithinSpentCreateForm(body.content);
-                }
 
             } catch (exception) {
                 console.log(exception);
