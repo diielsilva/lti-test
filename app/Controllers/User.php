@@ -2,100 +2,102 @@
 
 namespace App\Controllers;
 
-use App\Dtos\CustomResponse;
-use App\Helpers\ResponseHelper;
+use App\Dtos\ResponseBody;
 use App\Models\UserModel;
 
 class User extends BaseController
 {
     public function index()
     {
-        return view('pages/home');
+        $authenticatedUser = session()->get("online_user");
+
+        //Passing data to fulfill the update user form 
+        $data = [
+            "name" => $authenticatedUser["name"],
+            "email" => $authenticatedUser["email"]
+        ];
+
+        return view('pages/users/index', $data);
     }
 
     public function update()
     {
-        $form = json_decode($this->request->getBody(), true);
-        $dto = new CustomResponse([], []);
+        $request = $this->getRequestBody();
+        $response = new ResponseBody([]);
 
-        $name = $form["name"];
-        $email = $form["email"];
-        $password = $form["password"];
-
-        //VERIFY IF THERE IS SOME MISSING FIELD
-        if (!isset($name) || !isset($email) || !isset($password)) {
-            $dto->errors[] = "Missing required fields";
-
-            return ResponseHelper::send(400, $this->response, $dto);
+        //Verifying if it is missing a required field
+        if (empty($request["name"]) || empty($request["email"]) || empty($request["password"])) {
+            $response->message = "Missing required fields";
+            return $this->json(400, $response);
         }
 
-        //VERIFY IF THE EMAIL IS INVALID
+        $name = $request["name"];
+        $email = $request["email"];
+        $password = $request["password"];
+
+        //Verifying if email is invalid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $dto->errors[] = "Invalid email";
-
-            return ResponseHelper::send(400, $this->response, $dto);
+            $response->message = "Invalid email";
+            return $this->json(400, $response);
         }
 
-        //VERIFY IF PASSWORD LENGTH IS BELOW THE MINIMUM LENGTH
+        //Verifying if password is below minimum length
         if (strlen($password) < 6) {
-            $dto->errors[] = "Password must have 6 characters";
-
-            return ResponseHelper::send(400, $this->response, $dto);
+            $response = "Password must have 6 characters";
+            return $this->json(400, $response);
         }
 
-        $user = new UserModel();
-        $onlineUser = session()->get("online_user");
-        $hasUserWithNewEmail = $user->where("email", $email)->first();
+        $model = new UserModel();
+        $authenticatedUserId = $this->getCurrentAuthenticatedUserId();
+        $hasUserWithEmail = $model->where("email", $email)->first();
 
-        //VERIFY IF THE NEW EMAIL IS ALREADY IN USE BY ANOTHER USER
-        if ($hasUserWithNewEmail && $hasUserWithNewEmail["id"] !== $onlineUser["id"]) {
-            $dto->errors[] = "Email in use";
-
-            return ResponseHelper::send(409, $this->response, $dto);
+        //Verifying if the new email is in use by other user
+        if ($hasUserWithEmail && $hasUserWithEmail["id"] !== $authenticatedUserId) {
+            $response->message = "Email in use";
+            return $this->json(409, $response);
         }
 
-        //UPDATE USER
-        $user->save([
-            "id" => $onlineUser["id"],
+        //Updating user, with an ID, because this way, Codeignite performs an update instead of an insert
+        $model->save([
+            "id" => $authenticatedUserId,
             "name" => $name,
             "email" => $email,
             "password" => password_hash($password, PASSWORD_BCRYPT),
             "updated_at" => date("Y-m-d H:i:s")
         ]);
 
-        //UPDATE SESSION AFTER A SUCCESSFUL USER UPDATE
-        $onlineUser["name"] = $name;
-        $onlineUser["email"] = $email;
-        session()->set("online_user", $onlineUser);
+        //Updating user session, it is necessary to automatically fullfill the inputs of update user form
+        $userSession = session()->get("online_user");
+        $userSession["name"] = $name;
+        $userSession["email"] = $email;
 
-        $dto->content[] = "User updated";
-
-        return ResponseHelper::send(200, $this->response, $dto);
+        $response->message = "User updated";
+        return $this->json(200, $response);
     }
 
     public function delete()
     {
-        $dto = new CustomResponse([], []);
-        $userId = session()->get("online_user")["id"];
+        $authenticatedUserId = $this->getCurrentAuthenticatedUserId();
+        $response = new ResponseBody([]);
 
+        $model = new UserModel();
 
-        $user = new UserModel();
+        //Verifying if the user exists in the database (it can be redundant, because the user needs to exist to access this endpoint, but it is better to verify anyway)
+        $hasUserWithId = $model->find($authenticatedUserId);
 
-        //VERIFY IF ID EXISTS
-        $userWithSpecifiedId = $user->find($userId);
-
-        //IF USER ID WAS NOT FOUND, SEND ERROR RESPONSE
-        if (!$userWithSpecifiedId) {
-            $dto->errors[] = "User not found";
-
-            return ResponseHelper::send(404, $this->response, $dto);
+        //If the user was not found, return a 404 response
+        if (!$hasUserWithId) {
+            $response->message = "User not found";
+            return $this->json(404, $response);
         }
 
-        $user->delete($userId);
+        //Delete current user
+        $model->delete($authenticatedUserId);
 
+        //Destroy my session (logout)
         session()->destroy();
 
-        return ResponseHelper::send(200, $this->response, $dto);
+        return $this->json(200, $response);
     }
 
     public function logout()

@@ -65,4 +65,9 @@ abstract class BaseController extends Controller
     {
         return $this->response->setJSON($body)->setStatusCode($status);
     }
+
+    protected function getCurrentAuthenticatedUserId()
+    {
+        return session()->get("online_user")["id"];
+    }
 }
