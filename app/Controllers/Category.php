@@ -3,105 +3,98 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Dtos\CustomResponse;
-use App\Helpers\ResponseHelper;
+use App\Dtos\ResponseBody;
 use App\Models\CategoryModel;
 
 class Category extends BaseController
 {
     public function index()
     {
-        return view("pages/categories");
+        return view("pages/categories/index");
     }
 
     public function create()
     {
-        $userId = session()->get("online_user")["id"];
-        $form = json_decode($this->request->getBody(), true);
-        $dto = new CustomResponse([], []);
+        $authenticatedUserId = $this->getCurrentAuthenticatedUserId();
+        $request = $this->getRequestBody();
+        $response = new ResponseBody([]);
 
-        $name = $form["name"];
-
-        //VERIFY IF NAME DOES NOT EXIST
-        if (!isset($name)) {
-            $dto->errors[] = "Missing required fields";
-
-            return ResponseHelper::send(400, $this->response, $dto);
+        //Verifying if it is missing a required field
+        if (empty($request["name"])) {
+            $response->message = "Missing required fields";
+            return $this->json(400, $response);
         }
 
-        $category = new CategoryModel();
+        $name = $request["name"];
 
-        $userAlreadyHaveCategory = $category->where(["user_id" => $userId, "name" => $name])->first();
+        $model = new CategoryModel();
 
-        //VERIFY IF USER HAS A CATEGORY WITH SAME NAME
-        if ($userAlreadyHaveCategory) {
-            $dto->errors[] = "Category name is in use";
+        $hasCategoryWithName = $model->where(["user_id" => $authenticatedUserId, "name" => $name])->first();
 
-            return ResponseHelper::send(409, $this->response, $dto);
+        //Verifying if the user already has a category with the same name
+        if ($hasCategoryWithName) {
+            $response->message = "Category name is in use";
+            return $this->json(409, $response);
         }
 
-        //CREATE CATEGORY
-        $category->save([
-            "user_id" => $userId,
+        //Creating category
+        $model->save([
+            "user_id" => $authenticatedUserId,
             "name" => $name,
             "created_at" => date('Y-m-d H:i:s')
         ]);
 
-        $dto->content[] = "Category saved";
-
-        return ResponseHelper::send(201, $this->response, $dto);
+        $response->message = "Category saved";
+        return $this->json(201, $response);
     }
 
-    public function findAllByUser()
+    public function findByUser()
     {
-        $userId = session()->get("online_user")["id"];
-        $dto = new CustomResponse([], []);
+        $authenticatedUserId = $this->getCurrentAuthenticatedUserId();
+        $response = new ResponseBody([]);
 
-        $category = new CategoryModel();
+        $model = new CategoryModel();
 
-        //GET ALL CATEGORIES BELONGNING TO ONLINE USER
-        $userCategories = $category->where("user_id", $userId)->findAll();
+        //Getting all categories that belongs to the authenticated user
+        $categories = $model->where("user_id", $authenticatedUserId)->findAll();
 
-        //INSERTING CATEGORIES IN RESPONSE BODY
-        if ($userCategories) {
-            foreach ($userCategories as $category) {
-                $dto->content[] = $category;
-            }
+        //Fulfill the response body with categories
+        foreach ($categories as $category) {
+            $response->content[] = $category;
         }
 
-        return ResponseHelper::send(200, $this->response, $dto);
+        return $this->json(200, $response);
     }
 
     public function update()
     {
-        $requestBody = $this->getRequestBody();
-        $responseBody = new CustomResponse([], []);
-        $onlineUser = session()->get("online_user");
-
-        $categoryId = $requestBody["id"];
-        $categoryName = $requestBody["name"];
+        $request = $this->getRequestBody();
+        $response = new ResponseBody([]);
+        $authenticatedUserId = $this->getCurrentAuthenticatedUserId();
 
         //Verify if there is a missing required field
-        if (!isset($categoryId) || !isset($categoryName) || strlen($categoryName) < 1) {
-            $responseBody->errors[] = "Missing required fields";
-
-            return $this->json(400, $responseBody);
+        if (empty($request["id"]) || empty($request["name"])) {
+            $response->message = "Missing required fields";
+            return $this->json(400, $response);
         }
+
+        $id = $request["id"];
+        $newName = $request["name"];
 
         $model = new CategoryModel();
 
-        $hasAnotherCategoryWithNewName = $model->where(["name" => $categoryName, "user_id" => $onlineUser["id"]])->first();
+        $hasAnotherCategoryWithNewName = $model->where(["name" => $newName, "user_id" => $authenticatedUserId])->first();
 
         //Verify if online user has other category with the same name
-        if ($hasAnotherCategoryWithNewName && $hasAnotherCategoryWithNewName["id"] !== $categoryId) {
-            $responseBody->errors[] = "Category name in use";
-
-            return $this->json(409, $responseBody);
+        if ($hasAnotherCategoryWithNewName && $hasAnotherCategoryWithNewName["id"] !== $id) {
+            $response->message = "Category name in use";
+            return $this->json(409, $response);
         }
 
+        //Updating category
         $model->save([
-            "id" => $categoryId,
-            "name" => $categoryName,
+            "id" => $id,
+            "name" => $newName,
             "updated_at" => date("Y-m-d H:i:s")
         ]);
 
@@ -110,22 +103,22 @@ class Category extends BaseController
 
     public function delete()
     {
+        $request = $this->getRequestBody();
+        $response = new ResponseBody([]);
 
-        $body = json_decode($this->request->getBody(), true);
-        $dto = new CustomResponse([], []);
-
-        $categoryId = $body["id"];
-
-        if (!isset($categoryId)) {
-            $dto->errors[] = "Missing required fields";
-
-            return ResponseHelper::send(404, $this->response, $dto);
+        //Verifying if it is missing required fields
+        if (empty($request["id"])) {
+            $response->message = "Missing required fields";
+            return $this->json(400, $response);
         }
 
-        $category = new CategoryModel();
+        $id = $request["id"];
 
-        $category->delete(["id" => $categoryId]);
+        $model = new CategoryModel();
 
-        return ResponseHelper::send(204, $this->response, $dto);
+        //Deleting category
+        $model->delete(["id" => $id]);
+
+        return $this->json(200, $response);
     }
 }

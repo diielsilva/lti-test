@@ -27,11 +27,14 @@ $routes->group('/users', static function ($routes) {
     $routes->delete('', 'User::delete');
 });
 
-$routes->get('/categories', 'Category::index');
-$routes->post('/categories', 'Category::create');
-$routes->get('/categories/all', 'Category::findAllByUser');
-$routes->delete('/categories', 'Category::delete');
-$routes->put('/categories', 'Category::update');
+//Categories routes
+$routes->group('/categories', static function ($routes) {
+    $routes->get('', 'Category::index');
+    $routes->get('by-user', 'Category::findByUser');
+    $routes->post('', 'Category::create');
+    $routes->put('', 'Category::update');
+    $routes->delete('', 'Category::delete');
+});
 
 $routes->get('/spents', 'Spent::index');
 $routes->post('/spents', 'Spent::create');
