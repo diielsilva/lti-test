@@ -65,6 +65,33 @@
             }
         }
 
+        async function updateSpent(id) {
+            try {
+                const spentId = id;
+                const value = document.querySelector(`#update-value-${id}`).value;
+                const createdAt = document.querySelector(`#update-date-${id}`).value;
+                const categoryId = document.querySelector(`#update-category-${id}`).value
+                const description = document.querySelector(`#update-description-${id}`).value;
+
+                const response = await fetch("<?= site_url('/spents') ?>", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify({spentId, value, createdAt, categoryId, description})
+                });
+
+                if (response.status !== 200) {
+                    console.log('error');
+                } else {
+                    findSpentsBasedOnOnlineUser();
+                }
+
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
+
         function renderSpents(spents) {
             spentsSection.innerHTML = "";
 
@@ -74,16 +101,71 @@
                 spents.forEach(spent => {
                     const listItem = document.createElement("li");
                     const spentCard = document.createElement("div");
-                    const category = availableCategories.filter((category) => category.id === spent.category_id);
+                    const selectedCategory = availableCategories.filter((category) => category.id === spent.category_id)[0];
                     const removeSpentBtn = document.createElement("button");
+                    const updateSpentBtn = document.createElement("button");
+                    const inputValue = document.createElement("input");
+                    const inputDate = document.createElement("input");
+                    const inputCategory = document.createElement("select");
+                    const inputDescription = document.createElement("textarea");
+                    const selectPlaceholder = document.createElement("option");
+
+                    updateSpentBtn.innerText = "Update Category";
+                    updateSpentBtn.onclick = () => {
+                        updateSpent(spent.id);
+                    }
+
+                    selectPlaceholder.value = "";
+                    selectPlaceholder.innerText = "Category";
+                    selectPlaceholder.disabled = true;
+
+                    inputValue.id = `update-value-${spent.id}`;
+                    inputValue.placeholder = "Value";
+                    inputValue.type = "number";
+                    inputValue.required = true;
+                    inputValue.value = spent.value;
+
+                    inputDate.id = `update-date-${spent.id}`;
+                    inputDate.placeholder = "Date";
+                    inputDate.required = true;
+                    inputDate.value = spent.created_at.split(' ')[0];
+                    inputDate.type = "date";
+
+                    inputDescription.id = `update-description-${spent.id}`;
+                    inputDescription.placeholder = "Description";
+                    inputDescription.required = true;
+                    inputDescription.value = spent.description;
+
+                    inputCategory.appendChild(selectPlaceholder);
+                    inputCategory.required = true;
+                    inputCategory.id = `update-category-${spent.id}`;
+
+                    availableCategories.forEach(category => {
+                        const option = document.createElement("option");
+
+                        option.value = category.id;
+                        option.innerText = category.name;
+
+                        if (category.id === selectedCategory.id) {
+                            option.selected = true;
+                        }
+
+                        inputCategory.appendChild(option);
+                    });
+
 
                     removeSpentBtn.innerText = 'Remove Spent';
                     removeSpentBtn.onclick = () => {
                         removeSpent(spent.id);
                     }
 
-                    spentCard.innerText = `ID = ${spent.id}, Category = ${category[0].name}, Value = ${spent.value}, Description = ${spent.description}, Date = ${spent.created_at}`;
+                    spentCard.appendChild(inputValue);
+                    spentCard.appendChild(inputDate);
+                    spentCard.appendChild(inputCategory);
+                    spentCard.appendChild(inputDescription);
+
                     spentCard.appendChild(removeSpentBtn);
+                    spentCard.appendChild(updateSpentBtn);
 
                     listItem.appendChild(spentCard);
                     spentList.appendChild(listItem);

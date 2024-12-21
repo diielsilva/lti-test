@@ -78,6 +78,48 @@ class Spent extends BaseController
         return $this->json(200, $responseBody);
     }
 
+    public function update()
+    {
+        $requestBody = $this->getRequestBody();
+        $responseBody = new CustomResponse([], []);
+
+        $spentId = $requestBody["spentId"];
+        $value = $requestBody["value"];
+        $createdAt = $requestBody["createdAt"];
+        $categoryId = $requestBody["categoryId"];
+        $description = $requestBody["description"];
+
+        if (!isset($spentId) || !isset($value) || !isset($createdAt) || !isset($categoryId) || !isset($description)) {
+            $responseBody->errors[] = "Missing required fields";
+
+            return $this->json(400, $responseBody);
+        }
+
+        if ($value < 1) {
+            $responseBody->errors[] = "Invalid value";
+
+            return $this->json(400, $responseBody);
+        }
+
+        $createdAtTimestamps = strtotime($createdAt);
+        $createdAt = date('Y-m-d H:i:s', $createdAtTimestamps);
+
+        $model = new SpentModel();
+
+        $model->save([
+            "id" => $spentId,
+            "value" => $value,
+            "created_at" => $createdAt,
+            "category_id" => $categoryId,
+            "description" => $description,
+            "updated_at" => date('Y-m-d H:i:s')
+        ]);
+
+        $responseBody->content[] = "Spent updated";
+
+        return $this->json(200, $responseBody);
+    }
+
     public function delete()
     {
         $requestBody = $this->getRequestBody();
