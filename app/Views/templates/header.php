@@ -1,6 +1,7 @@
 <header>
     <nav>
         <ul>
+            <li><a href="<?= base_url("/users") ?>">Users</a></li>
             <li><a href="<?= base_url("/categories") ?>">Categories</a></li>
         </ul>
         <ul>
