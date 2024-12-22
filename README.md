@@ -16,6 +16,12 @@ Este repositório contém um simples gerenciador de despesas.
 - Primeiro o usuário deve se cadastrar utilizando o link: http://137.131.159.175/public/
 - Após realizar o login, você terá acesso à opções
 
+## Endpoints
+- /users (GET, PUT, POST, DELE)
+- /categories (GET, PUT, POST, DELE)
+- /spents (GET, PUT, POST, DELE)
+- /reports (POST)
+
 ## Melhorias Para Fazer
 
 - Código em si (não tive tempo de melhorar)
