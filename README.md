@@ -13,7 +13,7 @@ Este repositório contém um simples gerenciador de despesas.
 
 ## Como Acessar
 
-- Primeiro o usuário deve se cadastrar utilizando o link: [text](http://137.131.159.175/public/)
+- Primeiro o usuário deve se cadastrar utilizando o link: http://137.131.159.175/public/
 - Após realizar o login, você terá acesso à opções
 
 ## Melhorias Para Fazer
