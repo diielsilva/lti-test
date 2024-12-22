@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Dtos\CustomResponse;
+use App\Dtos\ResponseBody;
 use App\Models\SpentModel;
 
 class Spent extends BaseController
@@ -15,7 +15,7 @@ class Spent extends BaseController
 
     public function create()
     {
-        $responseBody = new CustomResponse([], []);
+        $responseBody = new ResponseBody([]);
         $onlineUser = session()->get('online_user')["id"];
         $spentToCreate = $this->getRequestBody();
 
@@ -25,20 +25,20 @@ class Spent extends BaseController
         $createdAt = $spentToCreate["created_at"];
 
         if (!isset($categoryId) || !isset($value) || !isset($description) || !isset($createdAt)) {
-            $responseBody->errors[] = "Missing required fields";
+            $responseBody->message = "Missing required fields";
 
             return $this->json(400, $responseBody);
         }
 
         //Verify if the spent value is greater than zero
         if ($value <= 0) {
-            $responseBody->errors[] = "Spent value must be greater than zero";
+            $responseBody->message = "Spent value must be greater than zero";
 
             return $this->json(400, $responseBody);
         }
 
         if (strlen($description) < 1) {
-            $responseBody->errors[] = "Spent description must have at least 1 character";
+            $responseBody->message = "Spent description must have at least 1 character";
 
             return $this->json(400, $responseBody);
         }
@@ -65,7 +65,7 @@ class Spent extends BaseController
     public function findByUser()
     {
         $onlineUser = session()->get('online_user')["id"];
-        $responseBody = new CustomResponse([], []);
+        $responseBody = new ResponseBody([]);
 
         $model = new SpentModel();
 
@@ -81,7 +81,7 @@ class Spent extends BaseController
     public function update()
     {
         $requestBody = $this->getRequestBody();
-        $responseBody = new CustomResponse([], []);
+        $responseBody = new ResponseBody([]);
 
         $spentId = $requestBody["spentId"];
         $value = $requestBody["value"];
@@ -90,13 +90,13 @@ class Spent extends BaseController
         $description = $requestBody["description"];
 
         if (!isset($spentId) || !isset($value) || !isset($createdAt) || !isset($categoryId) || !isset($description)) {
-            $responseBody->errors[] = "Missing required fields";
+            $responseBody->message = "Missing required fields";
 
             return $this->json(400, $responseBody);
         }
 
         if ($value < 1) {
-            $responseBody->errors[] = "Invalid value";
+            $responseBody->message = "Invalid value";
 
             return $this->json(400, $responseBody);
         }

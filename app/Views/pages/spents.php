@@ -4,42 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Spents</title>
+    <link rel="stylesheet" href="<?= base_url('/assets/styles.css') ?>">
 </head>
 
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="<?= base_url("/categories") ?>">Categories</a></li>
-            </ul>
-            <ul>
-                <li><a href="<?= base_url("/spents") ?>">Spents</a></li>
-            </ul>
-            <ul>
-                <li><a href="<?= base_url("/reports") ?>">Report</a></li>
-            </ul>
-            <ul>
-                <li>
-                    <form action="<?= site_url('/logout') ?>" method="POST">
-                        <button type="submit">Logout</button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <?php require_once(APPPATH . "/Views/templates/header.php") ?>
 
-    <form id="create-spent-form">
-        <input type="number" name="spent-value" id="spent-value" placeholder="Value" required>
-        <input type="date" name="spent-date" id="spent-date" placeholder="Date" required>
-        <select id="spent-category" required>
-            <option selected disabled value="">Category</option>
-        </select>
-        <textarea id="spent-description" required></textarea>
-        <button type="submit">Create Spent</button>
-    </form>
 
-    <section id="spents-section"></section>
+
+    <div class="container">
+        <h1>Spents</h1>
+        <form id="create-spent-form">
+            <input type="number" name="spent-value" id="spent-value" placeholder="Value" required>
+            <input type="date" name="spent-date" id="spent-date" placeholder="Date" required>
+            <select id="spent-category" required>
+                <option selected disabled value="">Category</option>
+            </select>
+            <textarea id="spent-description" placeholder="Description" required></textarea>
+            <button type="submit" class="submit-button">Create Spent</button>
+        </form>
+
+        <section id="spents-section"></section>
+    </div>
 
     <script>
         const availableCategories = [];
@@ -78,7 +65,13 @@
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8'
                     },
-                    body: JSON.stringify({spentId, value, createdAt, categoryId, description})
+                    body: JSON.stringify({
+                        spentId,
+                        value,
+                        createdAt,
+                        categoryId,
+                        description
+                    })
                 });
 
                 if (response.status !== 200) {
@@ -109,8 +102,13 @@
                     const inputCategory = document.createElement("select");
                     const inputDescription = document.createElement("textarea");
                     const selectPlaceholder = document.createElement("option");
+                    const spentTitle = document.createElement("h3");
 
-                    updateSpentBtn.innerText = "Update Category";
+                    spentTitle.innerText = "Spent";
+                    spentCard.classList.add("card")
+
+                    updateSpentBtn.innerText = "Update Spent";
+                    updateSpentBtn.classList.add("submit-button");
                     updateSpentBtn.onclick = () => {
                         updateSpent(spent.id);
                     }
@@ -155,17 +153,19 @@
 
 
                     removeSpentBtn.innerText = 'Remove Spent';
+                    removeSpentBtn.classList.add("submit-button");
                     removeSpentBtn.onclick = () => {
                         removeSpent(spent.id);
                     }
 
+                    spentCard.appendChild(spentTitle);
                     spentCard.appendChild(inputValue);
                     spentCard.appendChild(inputDate);
                     spentCard.appendChild(inputCategory);
                     spentCard.appendChild(inputDescription);
 
-                    spentCard.appendChild(removeSpentBtn);
                     spentCard.appendChild(updateSpentBtn);
+                    spentCard.appendChild(removeSpentBtn);
 
                     listItem.appendChild(spentCard);
                     spentList.appendChild(listItem);
@@ -195,7 +195,7 @@
 
         async function findCategoriesBasedOnOnlineUser() {
             try {
-                const response = await fetch("<?= site_url('/categories/all') ?>", {
+                const response = await fetch("<?= site_url('/categories/by-user') ?>", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8'
@@ -203,13 +203,9 @@
                 });
                 const body = await response.json();
 
-                const hasErrors = body.errors.length > 0;
+                //Must verify if it has errors later
 
-                if (hasErrors) {
-                    alert(body.errors[0]);
-                } else {
-                    fullfillCategoriesSelectWithinSpentCreateForm(body.content);
-                }
+                fullfillCategoriesSelectWithinSpentCreateForm(body.content);
 
             } catch (exception) {
                 console.log(exception);
@@ -238,11 +234,9 @@
 
                 const body = await response.json();
 
-                if (body.errors.length > 0) {
+                //Must verify if it has errors later
 
-                } else {
-                    findSpentsBasedOnOnlineUser();
-                }
+                findSpentsBasedOnOnlineUser();
 
             } catch (exception) {
                 console.log(exception);

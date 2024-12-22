@@ -21,7 +21,7 @@
             <input type="text" name="name" id="name" value="<?= $name ?>" placeholder="Name" required>
             <input type="email" name="email" id="email" value="<?= $email ?>" placeholder="Email" required>
             <input type="password" name="password" id="password" minlength="6" placeholder="Password" required>
-            <button type="submit" class="submit-button">Edit User</button>
+            <button type="submit" class="submit-button">Update User</button>
         </form>
 
         <button id="delete-button" class="submit-button">Delete Account</button>
