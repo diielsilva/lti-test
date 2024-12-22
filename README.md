@@ -25,3 +25,7 @@ Este repositório contém um simples gerenciador de despesas.
 - Melhorar interatividade com os formulários (resetar campos e etc)
 - Implementar melhores validações
 - Etc...
+
+## Estrutura 
+
+- O script para criação do banco segue na pasta root do projeto
